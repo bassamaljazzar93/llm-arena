@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مقارنة النماذج اللغوية 2026 | LLM Arena</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06080d;
+  --bg2: #0c1019;
+  --bg3: #121825;
+  --bg4: #1a2137;
+  --border: #1e2a42;
+  --border2: #2a3a5c;
+  --text: #e4e9f2;
+  --text2: #8a99bb;
+  --text3: #556080;
+  --claude: #e8a96b;
+  --claude-bg: rgba(232,169,107,0.08);
+  --gpt: #4ade80;
+  --gpt-bg: rgba(74,222,128,0.08);
+  --gemini: #38bdf8;
+  --gemini-bg: rgba(56,189,248,0.08);
+  --deep: #a78bfa;
+  --deep-bg: rgba(167,139,250,0.08);
+  --llama: #fb7185;
+  --llama-bg: rgba(251,113,133,0.08);
+  --grok: #fb923c;
+  --grok-bg: rgba(251,146,60,0.08);
+  --green: #34d399;
+  --red: #f87171;
+  --yellow: #fbbf24;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Noto Kufi Arabic', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* Custom cursor glow */
+.cursor-glow {
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,169,107,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  transition: left 0.3s ease, top 0.3s ease;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+.container { max-width: 1360px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes slideRight { from { opacity:0; transform:translateX(-40px); } to { opacity:1; transform:translateX(0); } }
+@keyframes slideLeft { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+@keyframes scaleIn { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+@keyframes barGrow { from { width: 0; } }
+@keyframes countUp { from { opacity:0; } to { opacity:1; } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes borderGlow {
+  0%,100% { border-color: var(--border); }
+  50% { border-color: var(--border2); }
+}
+
+.reveal { opacity:0; transform:translateY(30px); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  padding: 120px 0 100px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: float 8s ease-in-out infinite;
+}
+
+.hero-orb-1 { width:500px; height:500px; top:-200px; right:10%; background: rgba(232,169,107,0.06); animation-delay:0s; }
+.hero-orb-2 { width:400px; height:400px; bottom:-150px; left:10%; background: rgba(56,189,248,0.05); animation-delay:2s; }
+.hero-orb-3 { width:300px; height:300px; top:50%; left:50%; background: rgba(167,139,250,0.04); animation-delay:4s; }
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(30,42,66,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,42,66,0.15) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask: radial-gradient(ellipse 60% 60% at 50% 40%, black 0%, transparent 80%);
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  background: var(--claude-bg);
+  border: 1px solid rgba(232,169,107,0.2);
+  border-radius: 100px;
+  font-size: 13px;
+  color: var(--claude);
+  margin-bottom: 36px;
+  font-family: 'JetBrains Mono', monospace;
+  animation: fadeUp 0.6s ease both;
+}
+
+.hero-badge .dot { width:7px; height:7px; border-radius:50%; background:var(--claude); animation: pulse 2s infinite; }
+
+.hero h1 {
+  font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1.25;
+  margin-bottom: 24px;
+  animation: fadeUp 0.7s ease 0.1s both;
+}
+
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, var(--claude) 0%, var(--gemini) 50%, var(--gpt) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+.hero p {
+  font-size: 17px;
+  color: var(--text2);
+  max-width: 700px;
+  margin: 0 auto 48px;
+  line-height: 1.9;
+  animation: fadeUp 0.7s ease 0.2s both;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.7s ease 0.3s both;
+}
+
+.hero-stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hero-stat-label {
+  font-size: 13px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+/* ===== TABS ===== */
+.tabs-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 12px 0;
+  background: rgba(6,8,13,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 56px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  font-family: 'Noto Kufi Arabic', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  position: relative;
+  min-width: 100px;
+}
+
+.tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+
+.tab.active {
+  background: var(--bg4);
+  color: var(--text);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 30%;
+  right: 30%;
+  height: 2px;
+  background: var(--claude);
+  border-radius: 2px;
+}
+
+/* ===== SECTIONS ===== */
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.4s ease; }
+
+.section-header { margin-bottom: 40px; }
+.section-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.section-desc { color: var(--text2); font-size: 15px; max-width: 600px; }
+
+/* ===== CHART SECTION ===== */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.chart-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px;
+  transition: border-color 0.3s;
+}
+
+.chart-card:hover { border-color: var(--border2); }
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.chart-subtitle {
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 24px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Horizontal Bar Chart */
+.bar-chart { display: flex; flex-direction: column; gap: 14px; }
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bar-label {
+  width: 110px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar-label .color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 32px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bar-fill.animated { /* width set by JS */ }
+
+.bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+  border-radius: 8px;
+}
+
+/* Radar / Spider Chart via SVG */
+.radar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+}
+
+.radar-container svg { max-width: 100%; }
+
+/* Donut Chart */
+.donut-grid {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.donut-item { text-align: center; }
+
+.donut-label { font-size: 13px; font-weight: 600; margin-top: 10px; }
+.donut-sublabel { font-size: 11px; color: var(--text3); }
+
+/* ===== EXAMPLES ===== */
+.examples-section { margin-bottom: 56px; }
+
+.examples-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.example-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.example-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+
+.example-header {
+  padding: 18px 22px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.example-model {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.example-model .icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono';
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.example-badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono';
+}
+
+.example-prompt {
+  padding: 16px 22px;
+  background: rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.example-prompt-label {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'JetBrains Mono';
+  margin-bottom: 6px;
+}
+
+.example-prompt-text {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.example-response {
+  padding: 16px 22px 20px;
+}
+
+.example-response-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'JetBrains Mono';
+  margin-bottom: 8px;
+}
+
+.example-response-text {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.8;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.04);
+  font-family: 'JetBrains Mono', monospace;
+  direction: ltr;
+  text-align: left;
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.example-footer {
+  padding: 12px 22px 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.example-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-weight: 500;
+}
+
+.example-tag.pro { background: rgba(52,211,153,0.1); color: var(--green); }
+.example-tag.con { background: rgba(248,113,113,0.1); color: var(--red); }
+.example-tag.info { background: rgba(56,189,248,0.1); color: var(--gemini); }
+
+/* ===== COMPARISON TABLE ===== */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg3);
+  margin-bottom: 48px;
+}
+
+table { width:100%; border-collapse:collapse; font-size:14px; min-width:950px; }
+
+thead th {
+  padding: 16px 18px;
+  text-align: right;
+  font-weight: 700;
+  font-size: 13px;
+  background: rgba(0,0,0,0.35);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+tbody td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+tbody tr { transition: background 0.2s; }
+tbody tr:hover td { background: rgba(255,255,255,0.02); }
+tbody tr:last-child td { border-bottom:none; }
+
+.best-cell {
+  color: var(--green);
+  font-weight: 700;
+}
+
+.best-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono';
+  background: rgba(52,211,153,0.12);
+  color: var(--green);
+  margin-right: 6px;
+}
+
+/* ===== USE CASES ===== */
+.usecase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 18px;
+  margin-bottom: 48px;
+}
+
+.usecase-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.usecase-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+
+.usecase-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+}
+
+.usecase-emoji { font-size: 32px; margin-bottom: 14px; display: block; }
+.usecase-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.usecase-desc { font-size: 13px; color: var(--text2); line-height: 1.8; margin-bottom: 16px; }
+
+.usecase-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ===== PRICING ===== */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  margin-bottom: 48px;
+}
+
+.pricing-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.pricing-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+
+.pricing-name { font-size: 18px; font-weight: 700; }
+.pricing-co { font-size: 12px; color: var(--text3); margin-bottom: 18px; }
+
+.pricing-price {
+  font-family: 'JetBrains Mono';
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pricing-unit { font-size: 12px; color: var(--text3); margin-bottom: 20px; }
+
+.pricing-details { text-align: right; font-size: 13px; }
+.pricing-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.pricing-row:last-child { border: none; }
+.pricing-row span:last-child { font-family: 'JetBrains Mono'; font-weight: 600; }
+
+/* ===== VERDICT ===== */
+.verdict-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 48px;
+}
+
+.verdict-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.verdict-item {
+  padding: 22px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.04);
+  transition: all 0.3s;
+}
+
+.verdict-item:hover { border-color: var(--border); transform: translateY(-2px); }
+
+.verdict-cat { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; font-family: 'JetBrains Mono'; margin-bottom: 8px; }
+.verdict-winner { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.verdict-reason { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+/* ===== STRATEGY BOX ===== */
+.strategy-box {
+  background: linear-gradient(135deg, rgba(232,169,107,0.06) 0%, rgba(56,189,248,0.04) 100%);
+  border: 1px solid rgba(232,169,107,0.15);
+  border-radius: 20px;
+  padding: 36px;
+  margin-bottom: 48px;
+}
+
+.strategy-title { font-size: 20px; font-weight: 800; margin-bottom: 16px; }
+.strategy-text { font-size: 14px; color: var(--text2); line-height: 2; }
+
+.strategy-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.strategy-node {
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid;
+}
+
+.strategy-arrow {
+  font-size: 20px;
+  color: var(--text3);
+}
+
+/* ===== DISCLAIMER ===== */
+.disclaimer {
+  text-align: center;
+  padding: 48px 0 80px;
+  color: var(--text3);
+  font-size: 13px;
+  line-height: 1.9;
+  max-width: 700px;
+  margin: 0 auto;
+  border-top: 1px solid var(--border);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .charts-grid { grid-template-columns: 1fr; }
+  .example-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 24px; }
+}
+
+@media (max-width: 600px) {
+  .usecase-grid, .pricing-grid, .verdict-grid { grid-template-columns: 1fr; }
+  .hero { padding: 70px 0 50px; }
+  .bar-label { width: 80px; font-size: 11px; }
+  .strategy-flow { flex-direction: column; }
+  .strategy-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="container">
+    <div class="hero-badge"><span class="dot"></span> محدّث — فبراير 2026</div>
+    <h1>مقارنة <span class="gradient-text">النماذج اللغوية</span><br>الشاملة والمحايدة</h1>
+    <p>بيانات حقيقية، أمثلة عملية، رسوم بيانية تفاعلية — بدون انحياز لأي نموذج. كل واحد عنده نقاط قوة وضعف.</p>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num" data-count="6">0</div><div class="hero-stat-label">نماذج رئيسية</div></div>
+      <div><div class="hero-stat-num" data-count="12">0</div><div class="hero-stat-label">معيار أداء</div></div>
+      <div><div class="hero-stat-num" data-count="9">0</div><div class="hero-stat-label">حالة استخدام</div></div>
+      <div><div class="hero-stat-num" data-count="18">0</div><div class="hero-stat-label">مثال عملي</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STICKY TABS ===== -->
+<div class="tabs-container">
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" data-tab="charts" onclick="switchTab('charts')">📊 الرسوم البيانية</button>
+      <button class="tab" data-tab="examples" onclick="switchTab('examples')">💡 أمثلة عملية</button>
+      <button class="tab" data-tab="table" onclick="switchTab('table')">📋 جدول المقارنة</button>
+      <button class="tab" data-tab="pricing" onclick="switchTab('pricing')">💰 التسعير</button>
+      <button class="tab" data-tab="usecases" onclick="switchTab('usecases')">🎯 حالات الاستخدام</button>
+      <button class="tab" data-tab="verdict" onclick="switchTab('verdict')">🏆 الخلاصة</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== TAB: CHARTS ==================== -->
+<div class="section active" id="charts">
+  <div class="section-header reveal">
+    <div class="section-title">الأداء بالأرقام</div>
+    <div class="section-desc">رسوم بيانية تفاعلية تعرض المقارنة بصرياً — الأشرطة تتحرك عند التمرير.</div>
+  </div>
+
+  <div class="charts-grid">
+
+    <!-- Chart 1: Coding -->
+    <div class="chart-card reveal reveal-delay-1">
+      <div class="chart-title">💻 البرمجة — SWE-bench Verified</div>
+      <div class="chart-subtitle">اختبار إصلاح أخطاء حقيقية من GitHub</div>
+      <div class="bar-chart" id="codingChart">
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--claude)"></span>Claude 4.6</div>
+          <div class="bar-track"><div class="bar-fill" data-width="80.9" style="background:linear-gradient(90deg,rgba(232,169,107,0.3),var(--claude))">80.9%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gpt)"></span>GPT-5.2</div>
+          <div class="bar-track"><div class="bar-fill" data-width="80.0" style="background:linear-gradient(90deg,rgba(74,222,128,0.3),var(--gpt))">80.0%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gemini)"></span>Gemini 3</div>
+          <div class="bar-track"><div class="bar-fill" data-width="76.2" style="background:linear-gradient(90deg,rgba(56,189,248,0.3),var(--gemini))">76.2%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--deep)"></span>DeepSeek</div>
+          <div class="bar-track"><div class="bar-fill" data-width="65" style="background:linear-gradient(90deg,rgba(167,139,250,0.3),var(--deep))">~65%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 2: Math -->
+    <div class="chart-card reveal reveal-delay-2">
+      <div class="chart-title">🧮 الرياضيات — AIME 2025</div>
+      <div class="chart-subtitle">مسائل أولمبياد رياضيات متقدمة</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gpt)"></span>GPT-5.2</div>
+          <div class="bar-track"><div class="bar-fill" data-width="100" style="background:linear-gradient(90deg,rgba(74,222,128,0.3),var(--gpt))">100%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gemini)"></span>Gemini 3</div>
+          <div class="bar-track"><div class="bar-fill" data-width="100" style="background:linear-gradient(90deg,rgba(56,189,248,0.3),var(--gemini))">100%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--deep)"></span>DeepSeek R1</div>
+          <div class="bar-track"><div class="bar-fill" data-width="87.5" style="background:linear-gradient(90deg,rgba(167,139,250,0.3),var(--deep))">87.5%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--grok)"></span>Grok 4</div>
+          <div class="bar-track"><div class="bar-fill" data-width="87.5" style="background:linear-gradient(90deg,rgba(251,146,60,0.3),var(--grok))">87.5%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 3: Reasoning -->
+    <div class="chart-card reveal reveal-delay-3">
+      <div class="chart-title">🧠 الاستدلال — GPQA Diamond</div>
+      <div class="chart-subtitle">أسئلة علمية على مستوى الدكتوراه</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gpt)"></span>GPT-5.2</div>
+          <div class="bar-track"><div class="bar-fill" data-width="92.4" style="background:linear-gradient(90deg,rgba(74,222,128,0.3),var(--gpt))">92.4%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gemini)"></span>Gemini 3</div>
+          <div class="bar-track"><div class="bar-fill" data-width="91.9" style="background:linear-gradient(90deg,rgba(56,189,248,0.3),var(--gemini))">91.9%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--grok)"></span>Grok 4</div>
+          <div class="bar-track"><div class="bar-fill" data-width="87.5" style="background:linear-gradient(90deg,rgba(251,146,60,0.3),var(--grok))">87.5%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--claude)"></span>Claude 4.6</div>
+          <div class="bar-track"><div class="bar-fill" data-width="85" style="background:linear-gradient(90deg,rgba(232,169,107,0.3),var(--claude))">~85%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 4: Pricing -->
+    <div class="chart-card reveal reveal-delay-4">
+      <div class="chart-title">💵 التكلفة — سعر المخرجات / مليون رمز</div>
+      <div class="chart-subtitle">الأقصر = الأرخص (بالدولار)</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--grok)"></span>Grok 4.1</div>
+          <div class="bar-track"><div class="bar-fill" data-width="0.67" data-max="75" style="background:linear-gradient(90deg,rgba(251,146,60,0.3),var(--grok))">$0.50</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--deep)"></span>DeepSeek</div>
+          <div class="bar-track"><div class="bar-fill" data-width="3.6" data-max="75" style="background:linear-gradient(90deg,rgba(167,139,250,0.3),var(--deep))">$2.19</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gpt)"></span>GPT-5.2</div>
+          <div class="bar-track"><div class="bar-fill" data-width="13.3" data-max="75" style="background:linear-gradient(90deg,rgba(74,222,128,0.3),var(--gpt))">$10</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gemini)"></span>Gemini 3</div>
+          <div class="bar-track"><div class="bar-fill" data-width="16" data-max="75" style="background:linear-gradient(90deg,rgba(56,189,248,0.3),var(--gemini))">$12</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--claude)"></span>Claude Opus</div>
+          <div class="bar-track"><div class="bar-fill" data-width="100" data-max="75" style="background:linear-gradient(90deg,rgba(232,169,107,0.3),var(--claude))">$75</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 5: Context Window -->
+    <div class="chart-card reveal reveal-delay-1">
+      <div class="chart-title">📏 نافذة السياق — بالألف رمز</div>
+      <div class="chart-subtitle">كم يستطيع النموذج أن يقرأ دفعة واحدة</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--grok)"></span>Grok 4.1</div>
+          <div class="bar-track"><div class="bar-fill" data-width="100" style="background:linear-gradient(90deg,rgba(251,146,60,0.3),var(--grok))">2,000K</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gemini)"></span>Gemini 3</div>
+          <div class="bar-track"><div class="bar-fill" data-width="50" style="background:linear-gradient(90deg,rgba(56,189,248,0.3),var(--gemini))">1,000K</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--claude)"></span>Claude 4.6</div>
+          <div class="bar-track"><div class="bar-fill" data-width="50" style="background:linear-gradient(90deg,rgba(232,169,107,0.3),var(--claude))">1,000K β</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gpt)"></span>GPT-5.2</div>
+          <div class="bar-track"><div class="bar-fill" data-width="20" style="background:linear-gradient(90deg,rgba(74,222,128,0.3),var(--gpt))">400K</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--deep)"></span>DeepSeek</div>
+          <div class="bar-track"><div class="bar-fill" data-width="6.4" style="background:linear-gradient(90deg,rgba(167,139,250,0.3),var(--deep))">128K</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 6: Agentic / Terminal-Bench -->
+    <div class="chart-card reveal reveal-delay-2">
+      <div class="chart-title">🤖 الوكلاء الذكيون — Terminal-Bench 2.0</div>
+      <div class="chart-subtitle">تنفيذ أوامر حقيقية في الطرفية بشكل مستقل</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--claude)"></span>Claude 4.6</div>
+          <div class="bar-track"><div class="bar-fill" data-width="65.4" style="background:linear-gradient(90deg,rgba(232,169,107,0.3),var(--claude))">65.4%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gpt)"></span>GPT-5.2</div>
+          <div class="bar-track"><div class="bar-fill" data-width="54" style="background:linear-gradient(90deg,rgba(74,222,128,0.3),var(--gpt))">54.0%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="color-dot" style="background:var(--gemini)"></span>Gemini 3</div>
+          <div class="bar-track"><div class="bar-fill" data-width="48" style="background:linear-gradient(90deg,rgba(56,189,248,0.3),var(--gemini))">~48%</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Radar Chart -->
+  <div class="chart-card reveal" style="margin-bottom:48px;">
+    <div class="chart-title">🕸️ ملخص القدرات — مخطط رادار</div>
+    <div class="chart-subtitle">كل محور يمثل مجالاً مختلفاً — من 0 إلى 10</div>
+    <div class="radar-container">
+      <svg viewBox="0 0 500 420" width="500" id="radarSvg">
+        <!-- Grid -->
+        <g transform="translate(250,200)" id="radarGrid"></g>
+        <!-- Data -->
+        <g transform="translate(250,200)" id="radarData"></g>
+        <!-- Labels -->
+        <g transform="translate(250,200)" id="radarLabels"></g>
+      </svg>
+    </div>
+    <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:12px;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--claude)"></span>Claude</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--gpt)"></span>GPT</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--gemini)"></span>Gemini</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--deep)"></span>DeepSeek</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: EXAMPLES ==================== -->
+<div class="section" id="examples">
+  <div class="section-header reveal">
+    <div class="section-title">أمثلة عملية حقيقية</div>
+    <div class="section-desc">نفس المهمة — نماذج مختلفة — نتائج مختلفة. هذا يوضح الفرق الحقيقي.</div>
+  </div>
+
+  <!-- Example Set 1: Coding -->
+  <div class="examples-section">
+    <div class="examples-title reveal">💻 مثال: إصلاح خطأ برمجي في Python</div>
+    <div class="example-grid">
+      <div class="example-card reveal reveal-delay-1">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--claude-bg);color:var(--claude)">C</div> Claude Opus 4.6</div>
+          <div class="example-badge" style="background:var(--claude-bg);color:var(--claude)">الأفضل في البرمجة</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">الأمر</div>
+          <div class="example-prompt-text">أصلح هذا الكود: الـ async function تعمل deadlock عند استدعائها من داخل event loop</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--claude)">الاستجابة</div>
+          <div class="example-response-text">The issue is you're calling asyncio.run()
+inside an already-running event loop.
+
+Fix: Replace asyncio.run(coro()) with:
+  loop = asyncio.get_event_loop()
+  task = loop.create_task(coro())
+  result = await task
+
+Or use nest_asyncio if in Jupyter:
+  import nest_asyncio
+  nest_asyncio.apply()
+
+Root cause: asyncio.run() creates a NEW
+loop, blocking the current one → deadlock.</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag pro">شرح السبب الجذري</span>
+          <span class="example-tag pro">حلول متعددة</span>
+          <span class="example-tag pro">دقيق تقنياً</span>
+        </div>
+      </div>
+
+      <div class="example-card reveal reveal-delay-2">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--gpt-bg);color:var(--gpt)">G</div> GPT-5.2</div>
+          <div class="example-badge" style="background:var(--gpt-bg);color:var(--gpt)">جيد جداً</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">نفس الأمر</div>
+          <div class="example-prompt-text">أصلح هذا الكود: الـ async function تعمل deadlock عند استدعائها من داخل event loop</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--gpt)">الاستجابة</div>
+          <div class="example-response-text">You're hitting a common Python async
+anti-pattern. Here's the fix:
+
+# Instead of:
+asyncio.run(my_coroutine())
+
+# Use:
+await my_coroutine()
+
+If you need sync→async bridge:
+  from asgiref.sync import async_to_sync
+  async_to_sync(my_coroutine)()</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag pro">حل سريع ومباشر</span>
+          <span class="example-tag info">أقل تفصيلاً في الشرح</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Example Set 2: Math -->
+  <div class="examples-section">
+    <div class="examples-title reveal">🧮 مثال: مسألة رياضية معقدة</div>
+    <div class="example-grid">
+      <div class="example-card reveal reveal-delay-1">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--gpt-bg);color:var(--gpt)">G</div> GPT-5.2</div>
+          <div class="example-badge" style="background:var(--gpt-bg);color:var(--gpt)">الأفضل في الرياضيات</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">المسألة</div>
+          <div class="example-prompt-text">أوجد عدد الأعداد الصحيحة n حيث 1≤n≤1000 بحيث يكون n³+3n²+2n قابل للقسمة على 48</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--gpt)">الاستجابة</div>
+          <div class="example-response-text">n³+3n²+2n = n(n+1)(n+2)
+
+This is the product of 3 consecutive
+integers. For divisibility by 48 = 16×3:
+
+3 consecutive ints always divisible by 3✓
+Need divisibility by 16:
+
+Case analysis on n mod 16...
+After systematic enumeration:
+
+Answer: 125 values of n in [1, 1000]</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag pro">تحليل منهجي خطوة بخطوة</span>
+          <span class="example-tag pro">إجابة صحيحة 100%</span>
+        </div>
+      </div>
+
+      <div class="example-card reveal reveal-delay-2">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--deep-bg);color:var(--deep)">D</div> DeepSeek R1</div>
+          <div class="example-badge" style="background:var(--deep-bg);color:var(--deep)">جيد — سعر أقل 27x</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">نفس المسألة</div>
+          <div class="example-prompt-text">أوجد عدد الأعداد الصحيحة n حيث 1≤n≤1000 بحيث يكون n³+3n²+2n قابل للقسمة على 48</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--deep)">الاستجابة</div>
+          <div class="example-response-text">Let me think step by step...
+n(n+1)(n+2) divisible by 48
+
+&lt;thinking&gt;
+48 = 2⁴ × 3
+Among 3 consecutive integers, one is
+divisible by 3. Need 2⁴ from the product.
+...lengthy chain of thought...
+&lt;/thinking&gt;
+
+Answer: 125
+
+✓ Correct but took 3x more tokens</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag pro">إجابة صحيحة</span>
+          <span class="example-tag con">استهلاك رموز أكثر 3x</span>
+          <span class="example-tag info">تفكير مكشوف</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Example Set 3: Multimodal -->
+  <div class="examples-section">
+    <div class="examples-title reveal">🎥 مثال: تحليل صورة + فيديو</div>
+    <div class="example-grid">
+      <div class="example-card reveal reveal-delay-1">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--gemini-bg);color:var(--gemini)">G</div> Gemini 3 Pro</div>
+          <div class="example-badge" style="background:var(--gemini-bg);color:var(--gemini)">الأفضل متعدد الوسائط</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">الأمر</div>
+          <div class="example-prompt-text">حلل هذا الفيديو التعليمي (45 دقيقة) واستخرج النقاط الرئيسية مع الطوابع الزمنية</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--gemini)">الاستجابة</div>
+          <div class="example-response-text">📹 Video Analysis Complete
+
+00:00-05:30  Introduction & agenda
+05:31-18:45  Core concept: Event-driven
+18:46-32:10  Live coding demo
+32:11-40:00  Performance benchmarks  
+40:01-45:00  Q&A highlights
+
+Key Takeaways:
+1. Event-driven > polling for IoT
+2. MQTT reduces bandwidth 60%
+3. Demo showed 10ms latency
+
+[+ Generated visual summary diagram]</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag pro">يحلل فيديو أصلياً</span>
+          <span class="example-tag pro">طوابع زمنية دقيقة</span>
+          <span class="example-tag pro">يولّد ملخصات بصرية</span>
+        </div>
+      </div>
+
+      <div class="example-card reveal reveal-delay-2">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--claude-bg);color:var(--claude)">C</div> Claude Opus 4.6</div>
+          <div class="example-badge" style="background:rgba(248,113,113,0.1);color:var(--red)">محدود</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">نفس الأمر</div>
+          <div class="example-prompt-text">حلل هذا الفيديو التعليمي (45 دقيقة) واستخرج النقاط الرئيسية مع الطوابع الزمنية</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--claude)">الاستجابة</div>
+          <div class="example-response-text">I can analyze images and documents, 
+but I'm not able to process video 
+files directly.
+
+I can help if you:
+- Share a transcript of the video
+- Upload screenshots of key slides
+- Provide a text summary to enhance
+
+Would any of these alternatives work?</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag con">لا يدعم الفيديو</span>
+          <span class="example-tag info">يقترح بدائل</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Example Set 4: Writing -->
+  <div class="examples-section">
+    <div class="examples-title reveal">✍️ مثال: كتابة محتوى تسويقي بالعربي</div>
+    <div class="example-grid">
+      <div class="example-card reveal reveal-delay-1">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--claude-bg);color:var(--claude)">C</div> Claude Sonnet 4.5</div>
+          <div class="example-badge" style="background:var(--claude-bg);color:var(--claude)">الأفضل في الكتابة</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">الأمر</div>
+          <div class="example-prompt-text">اكتب وصف تسويقي لتطبيق إدارة أدوية للمسنين — السوق العربي</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--claude)">الاستجابة</div>
+          <div class="example-response-text">أهلنا — لأن صحتهم أمانة
+
+ما عاد لازم تقلق إذا أخذ أبوك 
+دواه ولا نسي. "أهلنا" يرسل تنبيهات
+ذكية بالوقت المناسب، ويطمّنك 
+بإشعار لحظة ما ياخذ علاجه.
+
+✦ تنبيهات بالعربي بصوت واضح
+✦ متابعة من بعيد بدون إحراج
+✦ تقارير أسبوعية للطبيب
+✦ يشتغل بدون إنترنت
+
+لأن اللي ربّونا يستاهلون راحة البال.</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag pro">عاطفي وطبيعي</span>
+          <span class="example-tag pro">مناسب ثقافياً</span>
+          <span class="example-tag pro">عربي سليم</span>
+        </div>
+      </div>
+
+      <div class="example-card reveal reveal-delay-2">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--gpt-bg);color:var(--gpt)">G</div> GPT-5.2</div>
+          <div class="example-badge" style="background:var(--gpt-bg);color:var(--gpt)">جيد</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">نفس الأمر</div>
+          <div class="example-prompt-text">اكتب وصف تسويقي لتطبيق إدارة أدوية للمسنين — السوق العربي</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--gpt)">الاستجابة</div>
+          <div class="example-response-text">تطبيق إدارة الأدوية الذكي 
+للمسنين
+
+هل تبحث عن طريقة سهلة لإدارة 
+أدوية والديك؟ تطبيقنا يوفر:
+
+• تذكيرات دوائية مخصصة
+• سجل طبي رقمي شامل
+• مشاركة التقارير مع الأطباء
+• واجهة سهلة الاستخدام
+
+حمّل التطبيق الآن واحصل على 
+راحة البال!</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag info">صحيح لغوياً</span>
+          <span class="example-tag con">أقل عاطفية</span>
+          <span class="example-tag con">أسلوب عام/قالبي</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Example Set 5: Long Context -->
+  <div class="examples-section">
+    <div class="examples-title reveal">📚 مثال: تحليل عقد قانوني 200 صفحة</div>
+    <div class="example-grid">
+      <div class="example-card reveal reveal-delay-1">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--gemini-bg);color:var(--gemini)">G</div> Gemini 3 Pro</div>
+          <div class="example-badge" style="background:var(--gemini-bg);color:var(--gemini)">1M سياق</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">المهمة</div>
+          <div class="example-prompt-text">حلل هذا العقد (200 صفحة) واستخرج البنود المحفوفة بالمخاطر والالتزامات المالية</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--gemini)">النتيجة</div>
+          <div class="example-response-text">✓ استوعب المستند كاملاً في جلسة
+✓ استخرج 23 بند خطر
+✓ رصد تناقض بين المادة 7 و 34
+⚠ بعض التفاصيل الدقيقة ضاعت
+   في الصفحات 150-180</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag pro">يقرأ 200 صفحة دفعة واحدة</span>
+          <span class="example-tag con">دقة تنخفض في النهاية</span>
+        </div>
+      </div>
+
+      <div class="example-card reveal reveal-delay-2">
+        <div class="example-header">
+          <div class="example-model"><div class="icon" style="background:var(--claude-bg);color:var(--claude)">C</div> Claude Opus 4.6</div>
+          <div class="example-badge" style="background:var(--claude-bg);color:var(--claude)">سياق فعّال</div>
+        </div>
+        <div class="example-prompt">
+          <div class="example-prompt-label">نفس المهمة</div>
+          <div class="example-prompt-text">حلل هذا العقد (200 صفحة) واستخرج البنود المحفوفة بالمخاطر والالتزامات المالية</div>
+        </div>
+        <div class="example-response">
+          <div class="example-response-label" style="color:var(--claude)">النتيجة</div>
+          <div class="example-response-text">✓ استوعب المستند بدقة عالية
+✓ استخرج 25 بند خطر (أكثر بـ 2)
+✓ رصد نفس التناقض + واحد إضافي
+✓ دقة ثابتة من البداية للنهاية
+⚠ يحتاج 1M beta (أغلى سعراً)</div>
+        </div>
+        <div class="example-footer">
+          <span class="example-tag pro">دقة أعلى عبر السياق كاملاً</span>
+          <span class="example-tag con">تكلفة أعلى</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: TABLE ==================== -->
+<div class="section" id="table">
+  <div class="section-header reveal">
+    <div class="section-title">جدول المقارنة الشامل</div>
+    <div class="section-desc">كل الأرقام في مكان واحد — مرّر أفقياً لرؤية كل النماذج.</div>
+  </div>
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr>
+          <th style="min-width:170px;">المعيار</th>
+          <th style="color:var(--claude)">Claude Opus 4.6</th>
+          <th style="color:var(--gpt)">GPT-5.2</th>
+          <th style="color:var(--gemini)">Gemini 3 Pro</th>
+          <th style="color:var(--deep)">DeepSeek R1</th>
+          <th style="color:var(--grok)">Grok 4.1</th>
+          <th style="color:var(--llama)">Llama 4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>الشركة</td><td>Anthropic</td><td>OpenAI</td><td>Google</td><td>DeepSeek</td><td>xAI</td><td>Meta</td></tr>
+        <tr><td>SWE-bench</td><td class="best-cell"><span class="best-badge">①</span>80.9%</td><td>80.0%</td><td>76.2%</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>AIME 2025</td><td>—</td><td class="best-cell"><span class="best-badge">①</span>100%</td><td class="best-cell">100%</td><td>87.5%</td><td>—</td><td>—</td></tr>
+        <tr><td>GPQA Diamond</td><td>~85%</td><td class="best-cell"><span class="best-badge">①</span>92.4%</td><td>91.9%</td><td>—</td><td>87.5%</td><td>—</td></tr>
+        <tr><td>Terminal-Bench</td><td class="best-cell"><span class="best-badge">①</span>65.4%</td><td>54%</td><td>~48%</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>MMMU-Pro</td><td>77.8%</td><td>84.2%</td><td class="best-cell"><span class="best-badge">①</span>81.2%*</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>السياق</td><td>1M β</td><td>400K</td><td>1M-2M</td><td>128K</td><td class="best-cell"><span class="best-badge">①</span>2M</td><td>1M</td></tr>
+        <tr><td>السعر (إدخال/M)</td><td>$15</td><td>$1.25</td><td>$2</td><td>$0.55</td><td class="best-cell"><span class="best-badge">①</span>$0.20</td><td>مجاني</td></tr>
+        <tr><td>السعر (مخرجات/M)</td><td>$75</td><td>$10</td><td>$12</td><td>$2.19</td><td class="best-cell"><span class="best-badge">①</span>$0.50</td><td>مجاني</td></tr>
+        <tr><td>المصدر</td><td>مغلق</td><td>مغلق+مفتوح</td><td>مغلق</td><td style="color:var(--green)">مفتوح ✓</td><td>مغلق</td><td style="color:var(--green)">مفتوح ✓</td></tr>
+        <tr><td>متعدد الوسائط</td><td>صور + PDF</td><td>صور + صوت</td><td class="best-cell"><span class="best-badge">①</span>صور+فيديو+صوت</td><td>نص أساساً</td><td>صور</td><td>صور</td></tr>
+        <tr><td>السلامة</td><td class="best-cell"><span class="best-badge">①</span>98.7%</td><td>جيد</td><td>جيد</td><td>رقابة صينية</td><td>أقل صرامة</td><td>متوسط</td></tr>
+        <tr><td>التشغيل المحلي</td><td>✗</td><td>✗</td><td>✗</td><td style="color:var(--green)">✓</td><td>✗</td><td class="best-cell" style="color:var(--green)">✓ الأفضل</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== TAB: PRICING ==================== -->
+<div class="section" id="pricing">
+  <div class="section-header reveal">
+    <div class="section-title">مقارنة التسعير التفصيلية</div>
+    <div class="section-desc">الأسعار بالدولار عبر الـ API — الاشتراك الشهري للاستخدام الشخصي مذكور أيضاً.</div>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card reveal reveal-delay-1" style="border-top:3px solid var(--claude)">
+      <div class="pricing-name" style="color:var(--claude)">Claude Opus 4.6</div>
+      <div class="pricing-co">Anthropic</div>
+      <div class="pricing-price" style="color:var(--claude)">$15</div>
+      <div class="pricing-unit">/ مليون رمز إدخال</div>
+      <div class="pricing-details">
+        <div class="pricing-row"><span>المخرجات</span><span>$75/M</span></div>
+        <div class="pricing-row"><span>Sonnet 4.5</span><span>$3 / $15</span></div>
+        <div class="pricing-row"><span>Haiku 4.5</span><span>$1 / $5</span></div>
+        <div class="pricing-row"><span>اشتراك Pro</span><span>$20/شهر</span></div>
+      </div>
+    </div>
+    <div class="pricing-card reveal reveal-delay-2" style="border-top:3px solid var(--gpt)">
+      <div class="pricing-name" style="color:var(--gpt)">GPT-5.2</div>
+      <div class="pricing-co">OpenAI</div>
+      <div class="pricing-price" style="color:var(--gpt)">$1.25</div>
+      <div class="pricing-unit">/ مليون رمز إدخال</div>
+      <div class="pricing-details">
+        <div class="pricing-row"><span>المخرجات</span><span>$10/M</span></div>
+        <div class="pricing-row"><span>GPT-4o</span><span>$2.50 / $10</span></div>
+        <div class="pricing-row"><span>o4-mini</span><span>$1.10 / $4.40</span></div>
+        <div class="pricing-row"><span>اشتراك Plus</span><span>$20/شهر</span></div>
+      </div>
+    </div>
+    <div class="pricing-card reveal reveal-delay-3" style="border-top:3px solid var(--gemini)">
+      <div class="pricing-name" style="color:var(--gemini)">Gemini 3 Pro</div>
+      <div class="pricing-co">Google</div>
+      <div class="pricing-price" style="color:var(--gemini)">$2</div>
+      <div class="pricing-unit">/ مليون رمز إدخال</div>
+      <div class="pricing-details">
+        <div class="pricing-row"><span>المخرجات</span><span>$12/M</span></div>
+        <div class="pricing-row"><span>Flash</span><span>$0.50 / $1.50</span></div>
+        <div class="pricing-row"><span>Flash-Lite</span><span>$0.10 / $0.40</span></div>
+        <div class="pricing-row"><span>اشتراك Advanced</span><span>$20/شهر</span></div>
+      </div>
+    </div>
+    <div class="pricing-card reveal reveal-delay-4" style="border-top:3px solid var(--deep)">
+      <div class="pricing-name" style="color:var(--deep)">DeepSeek R1</div>
+      <div class="pricing-co">DeepSeek</div>
+      <div class="pricing-price" style="color:var(--deep)">$0.55</div>
+      <div class="pricing-unit">/ مليون رمز إدخال</div>
+      <div class="pricing-details">
+        <div class="pricing-row"><span>المخرجات</span><span>$2.19/M</span></div>
+        <div class="pricing-row"><span>مع Cache</span><span>$0.07/M!</span></div>
+        <div class="pricing-row"><span>V3.2</span><span>$0.27 / $1.10</span></div>
+        <div class="pricing-row"><span>تشغيل محلي</span><span style="color:var(--green)">مجاني</span></div>
+      </div>
+    </div>
+    <div class="pricing-card reveal reveal-delay-5" style="border-top:3px solid var(--grok)">
+      <div class="pricing-name" style="color:var(--grok)">Grok 4.1</div>
+      <div class="pricing-co">xAI</div>
+      <div class="pricing-price" style="color:var(--grok)">$0.20</div>
+      <div class="pricing-unit">/ مليون رمز إدخال</div>
+      <div class="pricing-details">
+        <div class="pricing-row"><span>المخرجات</span><span>$0.50/M</span></div>
+        <div class="pricing-row"><span>السياق</span><span>2M رمز</span></div>
+        <div class="pricing-row"><span>اشتراك X Premium</span><span>$22/شهر</span></div>
+        <div class="pricing-row"><span>التقييم</span><span style="color:var(--green)">الأرخص</span></div>
+      </div>
+    </div>
+    <div class="pricing-card reveal reveal-delay-5" style="border-top:3px solid var(--llama)">
+      <div class="pricing-name" style="color:var(--llama)">Llama 4</div>
+      <div class="pricing-co">Meta</div>
+      <div class="pricing-price" style="color:var(--llama)">$0</div>
+      <div class="pricing-unit">تشغيل محلي مجاني</div>
+      <div class="pricing-details">
+        <div class="pricing-row"><span>عبر Together AI</span><span>~$0.90/M</span></div>
+        <div class="pricing-row"><span>عبر Groq</span><span>~$0.30/M</span></div>
+        <div class="pricing-row"><span>المتطلبات</span><span>GPU قوي</span></div>
+        <div class="pricing-row"><span>التقييم</span><span style="color:var(--green)">الأوفر</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: USE CASES ==================== -->
+<div class="section" id="usecases">
+  <div class="section-header reveal">
+    <div class="section-title">أفضل نموذج لكل مهمة</div>
+    <div class="section-desc">لا يوجد نموذج واحد يفوز في كل شيء — اختر حسب مهمتك.</div>
+  </div>
+  <div class="usecase-grid">
+    <div class="usecase-card reveal reveal-delay-1" style="border-top:2px solid var(--claude)"><span class="usecase-emoji">💻</span><div class="usecase-title">البرمجة والتطوير</div><div class="usecase-desc">كتابة كود، مراجعة، إصلاح أخطاء، مشاريع برمجية معقدة تتطلب فهم عميق.</div><div class="usecase-rec" style="background:var(--claude-bg);color:var(--claude)">⬤ Claude Opus 4.6</div></div>
+    <div class="usecase-card reveal reveal-delay-2" style="border-top:2px solid var(--gpt)"><span class="usecase-emoji">🧮</span><div class="usecase-title">الرياضيات والمنطق</div><div class="usecase-desc">مسائل معقدة، استدلال منطقي، تحليل بيانات تتطلب دقة حسابية عالية.</div><div class="usecase-rec" style="background:var(--gpt-bg);color:var(--gpt)">⬤ GPT-5.2 / o3</div></div>
+    <div class="usecase-card reveal reveal-delay-3" style="border-top:2px solid var(--gemini)"><span class="usecase-emoji">🎥</span><div class="usecase-title">الوسائط المتعددة</div><div class="usecase-desc">تحليل صور وفيديو وصوت، مستندات مختلطة، بيانات متعددة الأشكال.</div><div class="usecase-rec" style="background:var(--gemini-bg);color:var(--gemini)">⬤ Gemini 3 Pro</div></div>
+    <div class="usecase-card reveal reveal-delay-1" style="border-top:2px solid var(--gemini)"><span class="usecase-emoji">📚</span><div class="usecase-title">مستندات ضخمة</div><div class="usecase-desc">عقود قانونية، أبحاث أكاديمية، ملفات كبيرة في جلسة واحدة.</div><div class="usecase-rec" style="background:var(--gemini-bg);color:var(--gemini)">⬤ Gemini 3 Pro / Claude 4.6</div></div>
+    <div class="usecase-card reveal reveal-delay-2" style="border-top:2px solid var(--claude)"><span class="usecase-emoji">🤖</span><div class="usecase-title">الوكلاء الذكيون</div><div class="usecase-desc">أتمتة طويلة الأمد تتطلب تخطيط واستدعاء أدوات متعددة بشكل مستقل.</div><div class="usecase-rec" style="background:var(--claude-bg);color:var(--claude)">⬤ Claude Opus 4.6</div></div>
+    <div class="usecase-card reveal reveal-delay-3" style="border-top:2px solid var(--deep)"><span class="usecase-emoji">💰</span><div class="usecase-title">ميزانية محدودة</div><div class="usecase-desc">تصنيف نصوص، تلخيص بالجملة، معالجة بيانات ضخمة بأقل تكلفة.</div><div class="usecase-rec" style="background:var(--deep-bg);color:var(--deep)">⬤ DeepSeek / Grok</div></div>
+    <div class="usecase-card reveal reveal-delay-1" style="border-top:2px solid var(--llama)"><span class="usecase-emoji">🔒</span><div class="usecase-title">الخصوصية</div><div class="usecase-desc">بيانات حساسة لا يمكن إرسالها لسحابة خارجية، متطلبات امتثال صارمة.</div><div class="usecase-rec" style="background:var(--llama-bg);color:var(--llama)">⬤ Llama 4 محلياً</div></div>
+    <div class="usecase-card reveal reveal-delay-2" style="border-top:2px solid var(--claude)"><span class="usecase-emoji">✍️</span><div class="usecase-title">الكتابة الإبداعية</div><div class="usecase-desc">مقالات، محتوى تسويقي، قصص بأسلوب مميز وطبيعي خاصة بالعربي.</div><div class="usecase-rec" style="background:var(--claude-bg);color:var(--claude)">⬤ Claude Sonnet 4.5</div></div>
+    <div class="usecase-card reveal reveal-delay-3" style="border-top:2px solid var(--gpt)"><span class="usecase-emoji">🏢</span><div class="usecase-title">نظام بيئي متكامل</div><div class="usecase-desc">تكامل مع أدوات كثيرة، plugins، نظام بيئي ناضج ومستقر.</div><div class="usecase-rec" style="background:var(--gpt-bg);color:var(--gpt)">⬤ GPT-5.2 / Gemini 3</div></div>
+  </div>
+</div>
+
+<!-- ==================== TAB: VERDICT ==================== -->
+<div class="section" id="verdict">
+  <div class="section-header reveal">
+    <div class="section-title">الخلاصة النهائية</div>
+    <div class="section-desc">الفائز في كل فئة + الاستراتيجية المثلى.</div>
+  </div>
+
+  <div class="verdict-box reveal">
+    <div style="font-size:22px;font-weight:800;margin-bottom:8px;">🏆 الأفضل في كل فئة</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:4px;">فبراير 2026 — بناءً على بيانات موثّقة</div>
+    <div class="verdict-grid">
+      <div class="verdict-item"><div class="verdict-cat">البرمجة والتطوير</div><div class="verdict-winner" style="color:var(--claude)">Claude Opus 4.6</div><div class="verdict-reason">80.9% SWE-bench، 65.4% Terminal-Bench، عمل مستقل +30 ساعة</div></div>
+      <div class="verdict-item"><div class="verdict-cat">الاستدلال والرياضيات</div><div class="verdict-winner" style="color:var(--gpt)">GPT-5.2</div><div class="verdict-reason">100% AIME، 92.4% GPQA، انخفاض الهلوسة 30%</div></div>
+      <div class="verdict-item"><div class="verdict-cat">متعدد الوسائط</div><div class="verdict-winner" style="color:var(--gemini)">Gemini 3 Pro</div><div class="verdict-reason">1M سياق، فيديو+صور+صوت أصلياً، 81.2% MMMU-Pro</div></div>
+      <div class="verdict-item"><div class="verdict-cat">أفضل قيمة / سعر</div><div class="verdict-winner" style="color:var(--deep)">DeepSeek R1</div><div class="verdict-reason">أرخص 27x، مفتوح المصدر، 87.5% AIME</div></div>
+      <div class="verdict-item"><div class="verdict-cat">الخصوصية والتخصيص</div><div class="verdict-winner" style="color:var(--llama)">Llama 4 Maverick</div><div class="verdict-reason">تشغيل محلي، مفتوح الأوزان، صفر تكاليف API</div></div>
+      <div class="verdict-item"><div class="verdict-cat">السرعة وحجم السياق</div><div class="verdict-winner" style="color:var(--grok)">Grok 4.1</div><div class="verdict-reason">2M سياق، $0.20/M إدخال، الأرخص والأسرع</div></div>
+    </div>
+  </div>
+
+  <div class="strategy-box reveal">
+    <div class="strategy-title">🔄 الاستراتيجية المثلى: توجيه النماذج (Model Routing)</div>
+    <div class="strategy-text">
+      أفضل الفرق التقنية في 2026 لا تعتمد على نموذج واحد — بل تستخدم نظام توجيه ذكي يرسل كل مهمة للنموذج الأنسب. هذا يوفر أداء أعلى بتكلفة أقل 70-80%.
+    </div>
+    <div class="strategy-flow">
+      <div class="strategy-node" style="border-color:var(--text3);color:var(--text2)">📥 المهمة</div>
+      <div class="strategy-arrow">←</div>
+      <div class="strategy-node" style="border-color:var(--yellow);color:var(--yellow)">🧠 Router</div>
+      <div class="strategy-arrow">←</div>
+      <div class="strategy-node" style="border-color:var(--claude);color:var(--claude)">💻 كود → Claude</div>
+      <div class="strategy-arrow">←</div>
+      <div class="strategy-node" style="border-color:var(--gpt);color:var(--gpt)">🧮 منطق → GPT</div>
+      <div class="strategy-arrow">←</div>
+      <div class="strategy-node" style="border-color:var(--gemini);color:var(--gemini)">🎥 وسائط → Gemini</div>
+      <div class="strategy-arrow">←</div>
+      <div class="strategy-node" style="border-color:var(--deep);color:var(--deep)">💰 بسيط → DeepSeek</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DISCLAIMER ===== -->
+<div class="disclaimer">
+  <strong>إخلاء مسؤولية:</strong> هذه المقارنة تعتمد على بيانات متاحة للعموم حتى فبراير 2026 من مصادر مثل Vellum, Artificial Analysis, SWE-bench, و المواقع الرسمية. مجال الذكاء الاصطناعي يتطور بسرعة. بعض المعايير مُعلنة من الشركات ولم تُتحقق مستقلاً. الأمثلة توضيحية وليست نتائج اختبار رسمية. هذه الصفحة غير مموّلة ولا تنحاز لأي شركة.
+</div>
+
+</div>
+
+<script>
+// Tab switching
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelector(`[data-tab="${id}"]`).classList.add('active');
+  document.getElementById(id).classList.add('active');
+  // Re-trigger bar animations
+  if (id === 'charts') setTimeout(animateBars, 200);
+  // Re-trigger reveal
+  document.querySelectorAll(`#${id} .reveal`).forEach(el => {
+    el.classList.remove('visible');
+    setTimeout(() => el.classList.add('visible'), 50);
+  });
+}
+
+// Scroll reveal
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// Bar chart animation
+function animateBars() {
+  document.querySelectorAll('.bar-fill').forEach(bar => {
+    const w = bar.dataset.width;
+    bar.style.width = '0';
+    setTimeout(() => { bar.style.width = w + '%'; }, 100);
+  });
+}
+
+// Animate bars on chart visibility
+const chartObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.bar-fill').forEach((bar, i) => {
+        const w = bar.dataset.width;
+        bar.style.width = '0';
+        setTimeout(() => { bar.style.width = w + '%'; }, 100 + i * 100);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.chart-card').forEach(c => chartObs.observe(c));
+
+// Counter animation
+function animateCounters() {
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    let current = 0;
+    const step = Math.ceil(target / 30);
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(interval); }
+      el.textContent = current;
+    }, 40);
+  });
+}
+setTimeout(animateCounters, 500);
+
+// Cursor glow
+const glow = document.getElementById('cursorGlow');
+let mx = 0, my = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function updateGlow() {
+  glow.style.left = mx + 'px';
+  glow.style.top = my + 'px';
+  requestAnimationFrame(updateGlow);
+}
+updateGlow();
+
+// Radar Chart
+(function drawRadar() {
+  const labels = ['البرمجة', 'الرياضيات', 'الاستدلال', 'الكتابة', 'متعدد الوسائط', 'السلامة'];
+  const data = {
+    claude:  [10, 7, 8.5, 9.5, 6, 10],
+    gpt:     [9.5, 10, 9.5, 7, 8, 7.5],
+    gemini:  [8, 10, 9, 7, 10, 7.5],
+    deep:    [7, 8.5, 7.5, 6, 4, 5],
+  };
+  const colors = { claude:'232,169,107', gpt:'74,222,128', gemini:'56,189,248', deep:'167,139,250' };
+  const n = labels.length;
+  const R = 140;
+  const cx = 0, cy = 0;
+
+  function angle(i) { return (Math.PI * 2 * i / n) - Math.PI / 2; }
+  function point(i, r) {
+    return [cx + r * Math.cos(angle(i)), cy + r * Math.sin(angle(i))];
+  }
+
+  // Grid
+  const grid = document.getElementById('radarGrid');
+  for (let level = 1; level <= 5; level++) {
+    const r = R * level / 5;
+    let pts = [];
+    for (let i = 0; i < n; i++) pts.push(point(i, r).join(','));
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', pts.join(' '));
+    poly.setAttribute('fill', 'none');
+    poly.setAttribute('stroke', 'rgba(255,255,255,0.06)');
+    poly.setAttribute('stroke-width', '1');
+    grid.appendChild(poly);
+  }
+  // Axes
+  for (let i = 0; i < n; i++) {
+    const [x, y] = point(i, R);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+    line.setAttribute('x2', x); line.setAttribute('y2', y);
+    line.setAttribute('stroke', 'rgba(255,255,255,0.06)');
+    grid.appendChild(line);
+  }
+
+  // Data polygons
+  const dataG = document.getElementById('radarData');
+  for (const [key, vals] of Object.entries(data)) {
+    let pts = [];
+    for (let i = 0; i < n; i++) {
+      const r = R * vals[i] / 10;
+      pts.push(point(i, r).join(','));
+    }
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', pts.join(' '));
+    poly.setAttribute('fill', `rgba(${colors[key]},0.1)`);
+    poly.setAttribute('stroke', `rgba(${colors[key]},0.8)`);
+    poly.setAttribute('stroke-width', '2');
+    poly.style.opacity = '0';
+    poly.style.transition = 'opacity 0.8s ease';
+    dataG.appendChild(poly);
+
+    // Dots
+    for (let i = 0; i < n; i++) {
+      const r = R * vals[i] / 10;
+      const [x, y] = point(i, r);
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', x); circle.setAttribute('cy', y);
+      circle.setAttribute('r', '3');
+      circle.setAttribute('fill', `rgb(${colors[key]})`);
+      circle.style.opacity = '0';
+      circle.style.transition = 'opacity 1s ease';
+      dataG.appendChild(circle);
+    }
+  }
+
+  // Labels
+  const labelsG = document.getElementById('radarLabels');
+  for (let i = 0; i < n; i++) {
+    const [x, y] = point(i, R + 24);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x); text.setAttribute('y', y);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'middle');
+    text.setAttribute('fill', '#8a99bb');
+    text.setAttribute('font-size', '12');
+    text.setAttribute('font-family', 'Noto Kufi Arabic');
+    text.textContent = labels[i];
+    labelsG.appendChild(text);
+  }
+
+  // Animate radar on scroll
+  const radarObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        dataG.querySelectorAll('polygon, circle').forEach((el, i) => {
+          setTimeout(() => { el.style.opacity = '1'; }, i * 60);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  radarObserver.observe(document.getElementById('radarSvg'));
+})();
+</script>
+</body>
+</html>
